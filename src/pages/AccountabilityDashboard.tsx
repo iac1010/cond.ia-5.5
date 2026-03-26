@@ -187,11 +187,46 @@ export default function AccountabilityDashboard() {
     if (!reportRef.current) return;
     setIsGenerating(true);
     try {
-      const dataUrl = await toPng(reportRef.current, {
+      // Clone the element to strip problematic styles before generating the image
+      const element = reportRef.current;
+      const clone = element.cloneNode(true) as HTMLElement;
+      
+      // Apply cleanup to the clone
+      // Remove all --tw variables as they often contain modern color functions
+      const elements = clone.getElementsByTagName('*');
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i] as HTMLElement;
+        if (el.style) {
+          const propsToRemove = [];
+          for (let j = 0; j < el.style.length; j++) {
+            const prop = el.style[j];
+            if (prop.startsWith('--tw-')) {
+              propsToRemove.push(prop);
+            }
+          }
+          propsToRemove.forEach(prop => el.style.removeProperty(prop));
+          
+          if (el.style.color?.includes('okl') || el.style.color?.includes('color-mix')) el.style.color = '#000000';
+          if (el.style.backgroundColor?.includes('okl') || el.style.backgroundColor?.includes('color-mix')) el.style.backgroundColor = '#ffffff';
+          if (el.style.borderColor?.includes('okl') || el.style.borderColor?.includes('color-mix')) el.style.borderColor = '#000000';
+        }
+      }
+
+      // Temporarily append the clone to the body to render it (hidden)
+      clone.style.position = 'absolute';
+      clone.style.top = '-9999px';
+      clone.style.left = '-9999px';
+      clone.style.width = `${element.offsetWidth}px`;
+      document.body.appendChild(clone);
+
+      const dataUrl = await toPng(clone, {
         quality: 1,
         pixelRatio: 2,
         backgroundColor: '#ffffff',
       });
+      
+      // Remove the clone
+      document.body.removeChild(clone);
       
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();

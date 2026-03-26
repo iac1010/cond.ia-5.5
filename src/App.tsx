@@ -40,6 +40,7 @@ import VisitorControl from './pages/VisitorControl';
 import IotAutomation from './pages/IotAutomation';
 import EnergyMonitoring from './pages/EnergyMonitoring';
 import DocumentFactory from './pages/DocumentFactory';
+import DocumentManagement from './pages/DocumentManagement';
 import SystemPresentation from './pages/SystemPresentation';
 import { AssistantBia } from './components/AssistantBia';
 import { BiaBrain } from './components/BiaBrain';
@@ -111,6 +112,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     '/monitoring',
     '/energy',
     '/document-factory',
+    '/document-management',
     '/presentation',
     '/budget-forecast',
     '/financial-brain'
@@ -278,6 +280,7 @@ export default function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/document-factory" element={<DocumentFactory />} />
+          <Route path="/document-management" element={<DocumentManagement />} />
           <Route path="/presentation" element={<SystemPresentation />} />
         </Routes>
       </Layout>

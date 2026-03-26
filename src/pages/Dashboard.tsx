@@ -13,7 +13,7 @@ import {
   Box, UserCheck, Activity, Maximize2, CheckCircle2, Presentation, LogOut,
   X, Download, FileUp, Database as DatabaseIcon, MessageSquare, Target,
   Wifi, WifiOff, GripVertical, ClipboardList, LayoutList,
-  Bell, Truck, Brain, ExternalLink, Sparkles, LineChart
+  Bell, Truck, Brain, ExternalLink, Sparkles, LineChart, FileSignature
 } from 'lucide-react';
 import { KanbanMirror } from '../components/KanbanMirror';
 import { TicketsMirror } from '../components/TicketsMirror';
@@ -1366,6 +1366,35 @@ export default function Dashboard() {
             </div>
           </div>
           <span className="text-[11px] font-black uppercase tracking-[0.2em] relative z-10 text-white/70">Agendamentos</span>
+        </Link>
+      )
+    },
+    {
+      id: 'document-management',
+      type: 'wide',
+      component: (
+        <Link 
+          to={isEditMode ? '#' : "/document-management"} 
+          onClick={(e) => isEditMode && e.preventDefault()}
+          className="w-full h-full bg-gradient-to-br from-emerald-600 to-emerald-800 hover:brightness-110 transition-all p-4 flex flex-col justify-between group relative overflow-hidden border border-white/10 shadow-2xl active:scale-95 text-white"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 pointer-events-none" />
+          <div className="flex items-start gap-4 h-full relative z-10">
+            <div className="p-3 bg-white/10 rounded-2xl border border-white/20 shadow-sm group-hover:scale-110 transition-transform duration-500">
+              <FileSignature className="w-10 h-10 text-white" />
+            </div>
+            <div className="overflow-hidden flex-1">
+              <p className="text-[10px] font-black uppercase text-white/70 mb-1 tracking-[0.2em]">Gestão de Documentos & Assinaturas</p>
+              <div className="space-y-1">
+                <p className="font-black text-xl truncate text-white leading-tight">Assinaturas Digitais</p>
+                <div className="flex items-center gap-2 text-white/80">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <p className="text-sm font-bold text-white">75% Processados</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span className="text-[11px] font-black uppercase tracking-[0.2em] relative z-10 text-white/70">Fluxo de Assinaturas Ativo</span>
         </Link>
       )
     },

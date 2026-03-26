@@ -43,10 +43,9 @@ export async function generatePdf(element: HTMLElement, fileName: string, format
             if (style.innerHTML.includes('oklch') || style.innerHTML.includes('oklab') || style.innerHTML.includes('color-mix')) {
               // Replace modern color functions with a safe fallback
               // This prevents the parser from crashing while keeping most styles
+              // Using a more aggressive regex to handle nested functions
               style.innerHTML = style.innerHTML
-                .replace(/oklch\([^)]+\)/g, '#000000')
-                .replace(/oklab\([^)]+\)/g, '#000000')
-                .replace(/color-mix\([^)]+\)/g, '#000000');
+                .replace(/(oklch|oklab|color-mix)\([^;}]+\)/g, '#000000');
             }
           }
           
@@ -56,9 +55,15 @@ export async function generatePdf(element: HTMLElement, fileName: string, format
             const el = elements[i] as HTMLElement;
             // Remove Tailwind v4 variables that might contain oklch/oklab
             if (el.style) {
-              el.style.removeProperty('--tw-ring-color');
-              el.style.removeProperty('--tw-shadow-color');
-              el.style.removeProperty('--tw-ring-offset-color');
+              // Remove all --tw variables as they often contain modern color functions
+              const propsToRemove = [];
+              for (let j = 0; j < el.style.length; j++) {
+                const prop = el.style[j];
+                if (prop.startsWith('--tw-')) {
+                  propsToRemove.push(prop);
+                }
+              }
+              propsToRemove.forEach(prop => el.style.removeProperty(prop));
               
               if (el.style.color?.includes('okl') || el.style.color?.includes('color-mix')) el.style.color = '#000000';
               if (el.style.backgroundColor?.includes('okl') || el.style.backgroundColor?.includes('color-mix')) el.style.backgroundColor = '#ffffff';
@@ -170,10 +175,11 @@ export async function sharePdf(element: HTMLElement, fileName: string, format: s
           for (let i = 0; i < styles.length; i++) {
             const style = styles[i];
             if (style.innerHTML.includes('oklch') || style.innerHTML.includes('oklab') || style.innerHTML.includes('color-mix')) {
+              // Replace modern color functions with a safe fallback
+              // This prevents the parser from crashing while keeping most styles
+              // Using a more aggressive regex to handle nested functions
               style.innerHTML = style.innerHTML
-                .replace(/oklch\([^)]+\)/g, '#000000')
-                .replace(/oklab\([^)]+\)/g, '#000000')
-                .replace(/color-mix\([^)]+\)/g, '#000000');
+                .replace(/(oklch|oklab|color-mix)\([^;}]+\)/g, '#000000');
             }
           }
           
@@ -181,10 +187,17 @@ export async function sharePdf(element: HTMLElement, fileName: string, format: s
           const elements = clonedDoc.getElementsByTagName('*');
           for (let i = 0; i < elements.length; i++) {
             const el = elements[i] as HTMLElement;
+            // Remove Tailwind v4 variables that might contain oklch/oklab
             if (el.style) {
-              el.style.removeProperty('--tw-ring-color');
-              el.style.removeProperty('--tw-shadow-color');
-              el.style.removeProperty('--tw-ring-offset-color');
+              // Remove all --tw variables as they often contain modern color functions
+              const propsToRemove = [];
+              for (let j = 0; j < el.style.length; j++) {
+                const prop = el.style[j];
+                if (prop.startsWith('--tw-')) {
+                  propsToRemove.push(prop);
+                }
+              }
+              propsToRemove.forEach(prop => el.style.removeProperty(prop));
               
               if (el.style.color?.includes('okl') || el.style.color?.includes('color-mix')) el.style.color = '#000000';
               if (el.style.backgroundColor?.includes('okl') || el.style.backgroundColor?.includes('color-mix')) el.style.backgroundColor = '#ffffff';
